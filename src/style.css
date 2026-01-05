@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap");
 
 :root {
+  /* Default Dark */
   --bg-color: #0a0a12;
   --bg-card: #11111a;
   --text-color: #f8f9fa;
@@ -8,12 +9,27 @@
   --primary: #f72585;
   --secondary: #4cc9f0;
   --accent: #7209b7;
+  --input-bg: rgba(255, 255, 255, 0.03);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --brands-bg: #050508;
+  --hero-overlay: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
   --gradient: linear-gradient(135deg, var(--primary), var(--accent));
 
   --font-main: "Inter", sans-serif;
   --container-width: 1200px;
   --header-height: 80px;
   --border-radius: 12px;
+}
+
+[data-theme="light"] {
+  --bg-color: #ffffff;
+  --bg-card: #f8f9fa;
+  --text-color: #1a1a2e;
+  --text-muted: #4a4a5e;
+  --input-bg: #ffffff;
+  --input-border: #e0e0e0;
+  --brands-bg: #f1f2f6;
+  --hero-overlay: linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
 }
 
 * {
@@ -29,6 +45,7 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
@@ -146,8 +163,70 @@ header .container {
   height: 100%;
 }
 
-.logo {
-  height: 48px;
+/* Logo filter for dark mode readability */
+/* Logo filter for dark mode readability */
+.logo,
+.footer-logo {
+  /* Add a stroke/glow to separate black elements from dark background */
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.8));
+  height: auto;
+  max-height: 48px; /* Ensure it doesn't get massive */
+}
+
+/* Specific sizing for header logo to prevent it from being massive */
+header .logo {
+  height: 40px;
+  width: auto;
+}
+
+[data-theme="light"] .logo,
+[data-theme="light"] .footer-logo {
+  filter: none;
+}
+
+/* Contact Form Input Fixes */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-family: var(--font-main);
+  transition: all 0.3s ease;
+}
+
+.form-group select {
+  appearance: none;
+  /* Use a simple, high-contrast white arrow for dark theme default */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+/* Change arrow to dark for light theme */
+[data-theme="light"] .form-group select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a0a12' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+/* Ensure dropdown options are readable */
+.form-group select option {
+  background-color: var(--bg-card);
+  color: var(--text-color);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--input-bg);
+  box-shadow: 0 0 0 2px rgba(247, 37, 133, 0.2);
 }
 
 /* Hero */
@@ -168,18 +247,29 @@ header .container {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  opacity: 0.4;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+  opacity: 1; /* Managed by overlay now */
+}
+
+/* Hero Overlay for theme adaptation */
+#hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--hero-overlay);
+  z-index: 1;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 600px;
 }
 
 .hero-content h1 {
-  background: linear-gradient(to right, #fff, #a0a0b0);
+  background: linear-gradient(to right, var(--text-color), var(--text-muted));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -229,7 +319,8 @@ header .container {
 /* Brands */
 #brands {
   padding: 4rem 0;
-  background: #050508;
+  background: var(--brands-bg);
+  transition: background-color 0.3s ease;
 }
 
 .brands-grid {
@@ -238,13 +329,13 @@ header .container {
   gap: 3rem;
   align-items: center;
   justify-items: center;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .brand-item {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--text-color);
   letter-spacing: -0.05em;
 }
 
@@ -265,7 +356,7 @@ footer {
 .footer-logo {
   height: 40px;
   margin-bottom: 1.5rem;
-  opacity: 0.8;
+  opacity: 1; /* Opacity handled by filter or color now */
 }
 
 .footer-links {
@@ -346,27 +437,6 @@ footer {
   font-size: 0.9rem;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #fff;
-  font-family: var(--font-main);
-  transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.05);
-}
-
 .info-item {
   margin-bottom: 2rem;
 }
@@ -387,4 +457,55 @@ footer {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+  color: var(--text-color);
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: rotate(15deg);
+  color: var(--primary);
+}
+
+/* Back to Top Button */
+#back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--primary);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+#back-to-top.visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+#back-to-top:hover {
+  transform: translateY(-5px);
+  background: var(--accent);
 }
